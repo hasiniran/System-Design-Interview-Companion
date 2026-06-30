@@ -41,6 +41,29 @@ ______________________________________________________
 
 ---
 
+## 📦 Product Characteristics
+
+| Characteristic | Notes |
+|----------------|-------|
+| Read-heavy / Write-heavy | |
+| Large / Small Objects | |
+| Global / Regional Users | |
+| Real-time / Asynchronous | |
+| Traffic Pattern | |
+
+---
+
+## 📝 Assumptions
+
+| Assumption | Why? |
+|------------|------|
+| | |
+| | |
+| | |
+
+
+---
+
 ## 📊 Capacity Estimation
 
 ### Users
