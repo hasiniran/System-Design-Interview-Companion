@@ -58,6 +58,7 @@
 - [ ] Printable cheat sheets
 - [ ] One-page summaries
 - [ ] Interview checklist
+- [ ] Printable interview worksheets with answer keys
 
 ---
 
