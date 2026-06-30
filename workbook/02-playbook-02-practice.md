@@ -57,9 +57,10 @@ For each item below, decide whether it is:
 | How long are deleted files retained? | | |
 
 ---
-
 ## Reflection
 
-Which requirements influenced your architecture the most?
+Review your answers.
 
-Why?
+1. Did you accidentally assume product requirements without asking?
+2. Which clarifying question would have had the biggest architectural impact?
+3. Which requirement would most influence your storage design?
