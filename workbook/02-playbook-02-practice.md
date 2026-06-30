@@ -40,6 +40,24 @@ For the following systems, list three functional and three non-functional requir
 
 ---
 
+## Exercise 4
+
+For each item below, decide whether it is:
+
+- Requirement
+- Clarifying Question
+
+| Item | Requirement | Clarifying Question |
+|------|-------------|---------------------|
+| Maximum file size? | | |
+| Upload files | | |
+| Can users edit simultaneously? | | |
+| 99.99% availability | | |
+| Version history | | |
+| How long are deleted files retained? | | |
+
+---
+
 ## Reflection
 
 Which requirements influenced your architecture the most?
