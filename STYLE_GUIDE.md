@@ -459,7 +459,23 @@ Before publishing a topic, ask:
 - [ ] Could I confidently explain this after reading it once?
 
 If any answer is "No", revise the topic before publishing.
+---
 
+## Interview Workflow
+
+Every playbook should reinforce the following interview flow whenever applicable:
+
+1. Understand the product.
+2. Identify functional requirements.
+3. Identify non-functional requirements.
+4. Ask clarifying questions.
+5. Identify workload characteristics.
+6. Make assumptions.
+7. Estimate capacity.
+8. Design the architecture.
+9. Explain trade-offs.
+
+Each playbook should focus primarily on its own stage while naturally preparing readers for the next.
 ---
 
 # Guiding Principle
