@@ -8,9 +8,9 @@
 
 | | |
 |---|---|
-| **Study Time** | 8 minutes |
+| **Study Time** | 10 minutes |
 | **Priority** | ⭐⭐⭐⭐⭐ Essential |
-| **Interview Expectation** | Design |
+| **Interview Expectation** | Requirements Discovery |
 | **Prerequisites** | Playbook 01 – How to Think About a System Design Interview |
 
 ---
@@ -477,7 +477,21 @@ Requirements do.
 ```
 
 ---
+## 🔜 What's Next?
 
+Now that you've identified the system requirements, the next step is understanding the expected scale.
+
+Questions like these come next:
+
+- Is the workload read-heavy or write-heavy?
+- How much data will the system store?
+- How much traffic should it handle?
+- Are users distributed globally?
+
+These aren't requirements—they're characteristics of the workload that help determine the appropriate architecture.
+
+The next playbook introduces capacity estimation and shows how experienced engineers use these observations to guide design decisions.
+---
 ## 🎯 30-Second Recap
 
 - ✔ Functional requirements describe **what** the system does.
