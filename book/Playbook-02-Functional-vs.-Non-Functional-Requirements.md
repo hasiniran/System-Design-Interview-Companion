@@ -46,7 +46,7 @@ A system can satisfy every functional requirement and still fail because it does
 
 ---
 
-# 🏗️ Requirements Drive Architecture
+## 🏗️ Requirements Drive Architecture
 
 ```text
 Business Problem
@@ -71,7 +71,9 @@ Choose them because they satisfy the requirements.
 
 Functional requirements describe **features**.
 
-They answer:
+They define the capabilities the system must provide.
+
+Ask yourself:
 
 > **What should users be able to do?**
 
@@ -95,11 +97,36 @@ For Dropbox:
 - Synchronize files
 - View file history
 
-A good functional requirement is observable.
+A functional requirement is something a user can observe or interact with.
 
-You can usually answer it with:
+A useful question is:
 
 > **"Can the user do this?"**
+
+---
+
+## Organize Before You Prioritize
+
+Grouping related requirements makes your thought process easier to follow.
+
+Example:
+
+### File Management
+
+- Upload
+- Download
+- Delete
+
+### Sharing
+
+- Share files
+- Share folders
+- Manage permissions
+
+### Collaboration
+
+- Version history
+- Real-time editing
 
 ---
 
@@ -122,7 +149,7 @@ Examples include:
 - Consistency
 - Cost
 
-Unlike functional requirements, these often compete with one another.
+Unlike functional requirements, these qualities often compete with one another.
 
 Example:
 
@@ -137,7 +164,7 @@ Higher availability may require additional infrastructure, increasing cost.
 | Upload photo | Upload completes in under 2 seconds |
 | Search users | Search responds within 100 ms |
 | Send message | 99.99% availability |
-| Store files | Data is durable across failures |
+| Store files | Data remains durable across failures |
 | View feed | Feed loads quickly under heavy traffic |
 
 A useful rule:
@@ -154,59 +181,179 @@ A useful rule:
 
 > Design Instagram.
 
-Weak response:
+**Candidate**
 
-> "I'd use PostgreSQL, Redis, Kafka..."
+> Before discussing the architecture, I'd like to clarify the requirements.
+>
+> - Are we designing photo sharing only?
+> - Should users have private accounts?
+> - Do we support Stories?
+> - Are notifications required?
+> - Approximately how many daily active users should I assume?
 
-Strong response:
-
-> "Before discussing architecture, I'd like to clarify the functional and non-functional requirements."
-
-This immediately demonstrates a structured approach.
-
----
-
-# Common Non-Functional Requirements
-
-## Scalability
-
-Can the system continue performing as users and traffic increase?
+This immediately demonstrates a structured approach and helps avoid incorrect assumptions.
 
 ---
 
-## Availability
+# Requirements vs. Clarifying Questions
 
-Can users access the system even if some components fail?
+One of the most common mistakes in system design interviews is confusing requirements with questions you need to ask the interviewer.
+
+Requirements describe what the system should do or how well it should perform.
+
+Clarifying questions reduce uncertainty before you begin designing.
+
+| Example | Requirement | Clarifying Question |
+|---------|-------------|---------------------|
+| Upload files | ✅ | |
+| Share folders | ✅ | |
+| High availability | ✅ | |
+| Maximum file size? | | ✅ |
+| Should deleted files be recoverable? | | ✅ |
+| Do users collaborate in real time? | | ✅ |
+| Is there a free tier? | | ✅ |
+
+> **Rule of thumb:** If the interviewer hasn't specified it and the answer could change your architecture, ask before making assumptions.
 
 ---
 
-## Reliability
+## 💡 The Golden Rule
 
-Does the system behave correctly and consistently?
+```text
+Never assume.
+
+Clarify first.
+
+Estimate second.
+
+Design third.
+```
 
 ---
 
-## Latency
+## Common Non-Functional Requirements
+
+### Scalability
+
+**Question**
+
+Can the system continue performing as traffic and user growth increase?
+
+**Example**
+
+An application should continue handling requests even after its user base grows from thousands to millions.
+
+---
+
+### Availability
+
+**Question**
+
+Can users access the system when failures occur?
+
+**Example**
+
+A shopping website should continue serving customers even if one application server crashes.
+
+---
+
+### Reliability
+
+**Question**
+
+Does the system behave correctly and consistently over time?
+
+**Example**
+
+Every successfully placed order should be processed exactly once.
+
+---
+
+### Latency
+
+**Question**
 
 How quickly does the system respond?
 
+**Example**
+
+Users expect search results to appear within a few hundred milliseconds.
+
 ---
 
-## Durability
+### Durability
+
+**Question**
 
 Will data survive crashes and failures?
 
+**Example**
+
+Uploaded files should not be lost if a storage server fails.
+
 ---
 
-## Security
+### Security
+
+**Question**
 
 Can users trust the system to protect their data?
 
+**Example**
+
+Personal documents should only be accessible by authorized users.
+
 ---
 
-## Consistency
+### Consistency
 
-Do all users see the same data at the same time?
+**Question**
+
+Do all users observe the correct version of the data?
+
+**Example**
+
+A bank account balance should remain consistent across all services after a transfer.
+
+---
+
+# Requirements Create Trade-offs
+
+Every important non-functional requirement has a cost.
+
+Understanding these trade-offs is one of the strongest indicators of good system design.
+
+```text
+High Availability
+        │
+        ▼
+Replication
+        │
+        ▼
+Higher Infrastructure Cost
+
+----------------------------
+
+Low Latency
+        │
+        ▼
+Caching
+        │
+        ▼
+Cache Invalidation Complexity
+
+----------------------------
+
+High Durability
+        │
+        ▼
+Multiple Copies
+        │
+        ▼
+Higher Storage Cost
+```
+
+Good architects don't just identify trade-offs—they explain why those trade-offs are worthwhile.
 
 ---
 
@@ -214,7 +361,7 @@ Do all users see the same data at the same time?
 
 Not every requirement has equal importance.
 
-For example:
+Different products prioritize different qualities.
 
 ### Banking System
 
@@ -248,8 +395,6 @@ Priority:
 - Low Latency ⭐⭐⭐⭐⭐
 - Availability ⭐⭐⭐⭐☆
 
----
-
 The architecture changes depending on which qualities matter most.
 
 ---
@@ -262,9 +407,21 @@ Instead, they want to see whether you can identify the **important** ones.
 
 Ask yourself:
 
-> Which requirements will influence my design?
+> Which requirements will have the greatest influence on my architecture?
 
 Those are the ones worth discussing.
+
+---
+
+## ✅ Interview Checklist
+
+Before drawing your first box, ask yourself:
+
+- □ Do I understand the product?
+- □ Do I know the core features?
+- □ Have I identified the important quality attributes?
+- □ Have I asked clarifying questions?
+- □ Which requirements will most influence my design?
 
 ---
 
@@ -278,25 +435,23 @@ Those are the ones worth discussing.
 
 ❌ Assuming every system values consistency over availability (or vice versa).
 
-❌ Forgetting to prioritize.
+❌ Forgetting to prioritize requirements.
 
 ---
 
 ## ☕ Backend Java Lens
 
-When designing a Spring Boot service, requirements influence implementation.
-
-Examples:
+When designing Spring Boot applications, requirements influence both architecture and implementation.
 
 | Requirement | Possible Design Choice |
 |-------------|------------------------|
 | High Availability | Multiple application instances behind a load balancer |
-| Low Latency | Introduce Redis caching |
+| Low Latency | Redis caching |
 | Reliability | Retry policies and circuit breakers |
 | Security | Spring Security with OAuth2/JWT |
 | Scalability | Stateless services with horizontal scaling |
 
-Notice that frameworks don't determine the architecture.
+Frameworks don't determine the architecture.
 
 Requirements do.
 
@@ -305,25 +460,20 @@ Requirements do.
 ## 📝 Whiteboard Sketch
 
 ```text
-            Requirements
+                  Requirements
 
-        Functional
-             │
-             ▼
+          ┌──────────┴──────────┐
+          ▼                     ▼
 
-     System Features
+     Functional         Non-Functional
 
-             │
+          \               /
 
-             ▼
+           \             /
 
- Architecture Decisions
+            ▼           ▼
 
-             ▲
-
-             │
-
- Non-Functional
+      Architecture Decisions
 ```
 
 ---
@@ -333,9 +483,9 @@ Requirements do.
 - ✔ Functional requirements describe **what** the system does.
 - ✔ Non-functional requirements describe **how well** it does it.
 - ✔ Requirements should drive architecture.
+- ✔ Clarify before making assumptions.
 - ✔ Prioritize requirements before choosing technologies.
 - ✔ Different systems prioritize different qualities.
-- ✔ Clarifying requirements is one of the strongest signals in a system design interview.
 
 ---
 
