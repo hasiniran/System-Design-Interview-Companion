@@ -491,6 +491,7 @@ Questions like these come next:
 These aren't requirements—they're characteristics of the workload that help determine the appropriate architecture.
 
 The next playbook introduces capacity estimation and shows how experienced engineers use these observations to guide design decisions.
+
 ---
 ## 🎯 30-Second Recap
 
