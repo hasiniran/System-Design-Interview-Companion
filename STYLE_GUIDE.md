@@ -402,6 +402,18 @@ Do not invent new emojis.
 
 ---
 
+## Interview Communication
+
+Every playbook should encourage readers to:
+
+- Group related concepts.
+- State assumptions explicitly.
+- Separate requirements from clarifying questions.
+- Explain the reasoning behind decisions.
+- Discuss trade-offs instead of naming technologies.
+
+---
+
 # References
 
 Prefer:
