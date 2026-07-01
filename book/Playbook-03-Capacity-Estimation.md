@@ -1,8 +1,8 @@
-# Capacity Estimation
+# Playbook 03 – Capacity Estimation
 
-> Capacity estimation isn't about getting the exact numbers.
+> Capacity estimation isn't about getting exact numbers.
 >
-> It's about understanding the **order of magnitude** so you can choose the right architecture.
+> It's about estimating the **order of magnitude** so you can choose the right architecture.
 
 ---
 
@@ -10,74 +10,36 @@
 
 | | |
 |---|---|
-| **Study Time** | 15 minutes |
+| **Study Time** | 12–15 minutes |
 | **Priority** | ⭐⭐⭐⭐⭐ Essential |
-| **Interview Expectation** | Estimate • Explain • Apply |
+| **Interview Expectation** | Capacity Estimation |
+| **Difficulty** | Intermediate |
 | **Prerequisites** | Playbook 02 – Functional vs. Non-Functional Requirements |
 
 ---
 
 ## 📌 What Problem Does This Solve?
 
-A common mistake in system design interviews is jumping directly into architecture.
+A common interview mistake is jumping directly into databases, caches, and load balancers.
 
-Experienced engineers estimate the scale first.
+Strong candidates first estimate the expected scale of the system.
 
-Questions like these shape your design:
+Capacity estimation helps answer:
 
-- How many users?
 - How much traffic?
 - How much storage?
 - How much bandwidth?
-- Is the system read-heavy or write-heavy?
+- What kind of workload?
+- How large is the system?
 
-You don't need perfect numbers.
-
-You need estimates that are reasonable enough to guide architectural decisions.
+Those estimates drive architecture.
 
 ---
 
 # 🧠 Mental Model
 
-Capacity estimation answers one question:
-
-> **How big is the problem we're solving?**
-
-The goal isn't mathematical precision.
-
-The goal is choosing an architecture that fits the scale.
-
-```text
-Tiny Scale
-      │
-      ▼
-Single Database
-
----------------------
-
-Medium Scale
-      │
-      ▼
-Distributed Database
-
----------------------
-
-Massive Scale
-      │
-      ▼
-Object Storage + Caching + CDN
 ```
-
-Different scales require different architectures.
-
----
-
-# 🏗 Interview Workflow
-
-Capacity estimation comes after understanding the requirements.
-
-```text
-Understand the Product
+Understand Product
         │
         ▼
 Requirements
@@ -92,321 +54,196 @@ Capacity Estimation
 Architecture
 ```
 
-Never estimate before understanding the product.
+Never estimate before understanding the product and its workload.
 
 ---
 
 # Product Characteristics
 
-Before calculating numbers, identify how the system is expected to be used.
-
-These are not requirements.
-
-They are observations that influence both your estimates and your architecture.
+Before calculating anything, understand the workload.
 
 | Characteristic | Why It Matters |
 |----------------|----------------|
-| Read-heavy vs. Write-heavy | Determines caching strategy |
-| Large vs. Small Objects | Determines storage solution |
-| Global vs. Regional Users | May require CDNs and multi-region deployments |
-| Real-time vs. Asynchronous | Influences communication patterns |
-| Predictable vs. Bursty Traffic | Impacts autoscaling and load balancing |
+| Read-heavy vs Write-heavy | Cache strategy |
+| Large vs Small Objects | Storage choice |
+| Global vs Regional | CDN / Multi-region |
+| Real-time vs Async | Communication model |
+| Predictable vs Bursty | Autoscaling |
 
-### Examples
+Before estimating, ask yourself:
 
-**Twitter**
+- How many users?
+- How frequently do they use the feature?
+- How large is the average object?
+- How long is data retained?
+- Is the workload read-heavy or write-heavy?
 
-- Read-heavy
-- Small objects
-- Global users
-- Bursty traffic
-
-**Dropbox**
-
-- Large objects
-- Read-heavy
-- Long-term storage
-- High durability
-
----
-
-# The Five Questions
-
-Every estimation starts with these five questions.
-
-1. How many users?
-2. How often do they perform the action?
-3. How large is each request or object?
-4. How much data accumulates over time?
-5. How much traffic does that generate?
-
-If you can answer these, you can estimate almost any system.
+> 💡 **Think Like an Architect**
+>
+> Every characteristic should point toward an architectural decision.
+>
+> - Read-heavy → Cache
+> - Large objects → Object Storage
+> - Global users → CDN
+> - High write throughput → Queue
 
 ---
 
-# Quick Math Toolkit
+# Capacity Estimation Toolkit
 
-Approximation is expected.
+| Estimate | Formula | Why It Matters |
+|-----------|---------|----------------|
+| Average QPS | Requests/day ÷ 86,400 | Baseline server sizing |
+| Peak QPS | 3–5 × Average QPS* | Autoscaling & load balancing |
+| Storage | Users × Objects × Size | Storage architecture |
+| Bandwidth | Peak QPS × Response Size | Network & CDN |
+| Cache Size | Cached Objects × Size | Redis sizing |
 
-| Unit | Value |
-|------|------:|
-| 1 KB | 1,024 B |
-| 1 MB | 1,024 KB |
-| 1 GB | 1,024 MB |
-| 1 TB | 1,024 GB |
-| 1 PB | 1,024 TB |
+> *Assume **3–5×** unless the interviewer specifies traffic patterns. Explain your assumption.
 
-Useful approximations:
-
-| Value | Approximation |
-|------|---------------|
-| Million | 10⁶ |
-| Billion | 10⁹ |
-| Trillion | 10¹² |
-
-Round numbers whenever possible.
-
-Interviewers evaluate reasoning—not arithmetic.
-
+📌 Need a quick refresher on binary units, powers of two, and common estimation formulas? See the Capacity Estimation Cheat Sheet.
 ---
 
-# Interview Shortcuts
+# Worked Example – Dropbox
 
-These formulas cover most interview scenarios.
+**Interviewer**
 
-### Average QPS
+> Design Dropbox.
 
-```text
-Requests per Day
-────────────────
-     86,400
-```
+**Candidate**
 
----
-
-### Peak QPS
-
-```text
-≈ 5 × Average QPS
-```
-
-Use a different multiplier only if the interviewer specifies unusual traffic patterns.
-
----
-
-### Storage
-
-```text
-Users
-×
-Objects per User
-×
-Average Object Size
-```
-
----
-
-### Bandwidth
-
-```text
-Peak QPS
-×
-Average Response Size
-```
-
----
-
-### Cache Memory
-
-```text
-Cached Objects
-×
-Average Object Size
-```
-
----
-
-# Worked Example
-
-Suppose you're designing Dropbox.
-
-Assumptions:
+I'll make a few assumptions before estimating capacity.
 
 - 5 million daily active users
 - 1 upload per user per day
-- Average file size: 5 MB
+- Average file size = 5 MB
+- Read-heavy workload
 
-Storage generated per day:
+### Storage
 
-```text
+```
 5M × 1 × 5 MB
 
 ≈ 25 TB/day
-```
-
-Annual storage:
-
-```text
-25 TB × 365
 
 ≈ 9 PB/year
 ```
 
-What do these numbers tell us?
+### Average QPS
 
-- A relational database is not appropriate for storing files.
-- Object storage is required.
-- Metadata should be stored separately.
-- Durability becomes a primary concern.
+Assume 20 million requests/day.
 
-The numbers guide the architecture.
+```
+20,000,000 ÷ 86,400
 
----
+≈ 231 QPS
+```
 
-# From Numbers to Architecture
+### Peak QPS
 
-Capacity estimation isn't the final answer.
+```
+231 × 5
 
-It's the bridge to architecture.
+≈ 1,155 QPS
+```
 
-| Observation | Architectural Impact |
-|-------------|----------------------|
-| Millions of users | Horizontal scaling |
-| Petabytes of storage | Object storage |
-| Read-heavy | Caching |
-| Global users | CDN |
-| High write throughput | Queues |
-| Large objects | Multipart upload |
+### Architectural Conclusions
 
-Ask yourself:
+- Store files in Object Storage.
+- Store metadata separately in a relational database.
+- Introduce caching because reads dominate.
+- Design for high durability.
 
-> **What architectural decision does this estimate justify?**
-
----
-
-# Common Mistakes
-
-❌ Spending too much time on arithmetic.
-
-❌ Forgetting to explain assumptions.
-
-❌ Estimating numbers that never influence the design.
-
-❌ Using unrealistic assumptions.
-
-❌ Treating estimates as exact values.
+Notice how every estimate influenced a design decision.
 
 ---
 
 ## ⭐ Interview Insight
 
-Interviewers rarely care whether your estimate is exactly right.
+Interviewers care more about your reasoning than your arithmetic.
 
-They care whether your reasoning is sound.
+A strong answer follows this pattern:
 
-State your assumptions.
-
-Show your calculations.
-
-Explain how the estimates influence your design.
+1. State assumptions.
+2. Perform quick estimates.
+3. Explain what the numbers tell you.
+4. Connect every estimate to the architecture.
 
 ---
 
 ## ✅ Interview Checklist
 
-Before moving to architecture:
-
-- □ Did I identify the product characteristics?
-- □ Did I estimate users?
+- □ Did I understand the workload?
+- □ Did I state assumptions?
 - □ Did I estimate storage?
 - □ Did I estimate traffic?
-- □ Did I identify whether the system is read-heavy or write-heavy?
-- □ Can I explain how these estimates affect my design?
+- □ Did I estimate Peak QPS?
+- □ Did every estimate influence my architecture?
 
 ---
 
 ## ⚠️ Interview Traps
 
-❌ Assuming numbers without saying so.
-
-❌ Spending ten minutes doing calculations.
-
-❌ Optimizing for tiny traffic.
-
-❌ Ignoring growth over time.
-
-❌ Forgetting to connect estimates to architecture.
+- Starting calculations before clarifying assumptions.
+- Treating estimates as exact values.
+- Spending too much time on arithmetic.
+- Calculating numbers that never influence the design.
 
 ---
 
 ## ☕ Backend Java Lens
 
-Capacity estimates influence implementation decisions.
-
 | Observation | Possible Design Choice |
 |-------------|------------------------|
-| High read traffic | Redis caching |
-| Large files | Object storage with metadata in SQL |
-| High write throughput | Asynchronous processing with Kafka |
-| Large user base | Stateless Spring Boot services behind a load balancer |
-| Global traffic | CDN + regional deployments |
-
-The architecture should always reflect the expected scale.
+| Read-heavy | Redis |
+| Large files | Object Storage |
+| High writes | Kafka |
+| Massive traffic | Stateless Spring Boot + Load Balancer |
+| Global users | CDN |
 
 ---
 
 ## 📝 Whiteboard Sketch
 
-```text
+```
 Product
-
-      │
-
-      ▼
-
-Characteristics
-
-      │
-
-      ▼
-
-Capacity Estimates
-
-      │
-
-      ▼
-
-Architecture Decisions
+   │
+   ▼
+Workload
+   │
+   ▼
+Capacity
+   │
+   ▼
+Architecture
 ```
 
 ---
 
 ## 🎯 30-Second Recap
 
-- ✔ Capacity estimation determines the scale of the system.
-- ✔ Product characteristics guide your estimates.
-- ✔ Approximate numbers are enough.
-- ✔ Explain every assumption.
-- ✔ Use estimates to justify architectural decisions.
+- Capacity estimation determines scale.
+- Estimate only what influences the architecture.
+- State assumptions before calculating.
+- Use quick, rounded numbers.
+- Every estimate should justify a design decision.
 
 ---
 
 ## 💬 Practice Exercise
 
-Your interviewer says:
-
-> Design a cloud file storage service.
-
-Without drawing any architecture:
+Design Google Drive.
 
 1. Identify the product characteristics.
-2. Estimate the number of users.
-3. Estimate daily storage growth.
-4. Estimate average and peak QPS.
-5. Explain which architectural decisions these estimates influence.
+2. State your assumptions.
+3. Estimate:
+   - Storage
+   - Average QPS
+   - Peak QPS
+4. Explain how those estimates influence your architecture.
 
 ---
 
 ## 💡 Key Takeaway
 
-> **Capacity estimation is not a math exercise. It is the bridge between understanding the problem and designing the right architecture.**
+> Capacity estimation is not a math exercise. It is the bridge between understanding the problem and choosing the right architecture.
