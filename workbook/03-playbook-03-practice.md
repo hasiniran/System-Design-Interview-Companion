@@ -1,219 +1,329 @@
-# Playbook 03 Practice Workbook
+# Workbook 03 – Capacity Estimation
 
-> **Goal:** Learn how to estimate system capacity and use those estimates to justify architectural decisions.
-
----
-
-## 📖 Before You Begin
-
-**Timebox:** 20 minutes
-
-Remember:
-
-- State assumptions aloud.
-- Round numbers whenever possible.
-- Explain your reasoning.
-- Capacity estimation is meant to guide architecture—not produce exact numbers.
+> This workbook is designed to simulate the first 10–15 minutes of a real system design interview.
+>
+> Focus on explaining your reasoning rather than performing perfect calculations.
 
 ---
 
-# Exercise 1 – Identify Product Characteristics
+## 🎯 Learning Objectives
 
-**Scenario**
+After completing this workbook, you should be able to:
 
-Your interviewer says:
-
-> Design Dropbox.
-
-Before estimating anything, identify the product characteristics.
-
-| Characteristic | Your Answer |
-|----------------|-------------|
-| Read-heavy or Write-heavy? | |
-| Large or Small Objects? | |
-| Global or Regional Users? | |
-| Real-time or Asynchronous? | |
-| Predictable or Bursty Traffic? | |
+- Identify the information needed before estimating capacity.
+- Make reasonable assumptions.
+- Estimate storage and traffic.
+- Connect every estimate to an architectural decision.
+- Communicate your reasoning clearly.
 
 ---
 
-### Reflection
+# Exercise 1 – Google Drive
 
-Which of these characteristics will have the greatest impact on your architecture?
+## 📝 Product Summary
 
-______________________________________________________
+Describe the product in one or two sentences.
 
-______________________________________________________
+What is the core purpose of the system?
 
----
+```
+____________________________________________________
 
-# Exercise 2 – Clarify Assumptions
-
-Your interviewer has not provided enough information.
-
-Write the assumptions you would make.
-
-### Users
-
-_____________________________________
-
-### Daily Active Users
-
-_____________________________________
-
-### Average Object Size
-
-_____________________________________
-
-### Upload Frequency
-
-_____________________________________
-
-### Read / Write Ratio
-
-_____________________________________
-
-### Retention Period
-
-_____________________________________
+____________________________________________________
+```
 
 ---
 
-# Exercise 3 – Storage Estimation
+## Functional Requirements
 
-Assume:
+Group related functionality together.
 
-- 5 million Daily Active Users
-- 1 upload per day
-- Average file size = 5 MB
+### Content Management
 
-Calculate:
+```
+____________________________________________________
 
-### Daily Storage
+____________________________________________________
+```
 
-_____________________________________
+### Collaboration
 
-### Annual Storage
+```
+____________________________________________________
 
-_____________________________________
+____________________________________________________
+```
 
-### Five-Year Storage
+### User Management
 
-_____________________________________
+```
+____________________________________________________
 
----
-
-# Exercise 4 – Traffic Estimation
-
-Assume:
-
-- 20 million requests per day
-
-### Average QPS
-
-_____________________________________
-
-### Peak QPS
-
-_____________________________________
+____________________________________________________
+```
 
 ---
 
-# Exercise 5 – Bandwidth Estimation
+## Non-Functional Requirements
 
-Assume:
+List the qualities that will influence your architecture.
 
-- Peak QPS = __________
+```
+____________________________________________________
 
-- Average Response Size = 500 KB
+____________________________________________________
 
-Estimate:
-
-### Bandwidth (MB/sec)
-
-_____________________________________
+____________________________________________________
+```
 
 ---
 
-# Exercise 6 – From Numbers to Architecture
+## Clarifying Questions
 
-For each observation, write the architectural implication.
+What would you ask before designing the system?
 
-| Observation | Architectural Decision |
-|-------------|------------------------|
-| Read-heavy workload | |
-| Petabytes of storage | |
-| Global users | |
-| Large files | |
-| High write throughput | |
+```
+____________________________________________________
 
----
+____________________________________________________
 
-# Exercise 7 – Interview Discussion
-
-Your interviewer asks:
-
-> Why did you estimate storage before choosing a database?
-
-Write a response in your own words.
-
-______________________________________________________
-
-______________________________________________________
-
-______________________________________________________
+____________________________________________________
+```
 
 ---
 
-# Exercise 8 – Reflection
+## Product Characteristics
 
-Which estimate influenced your architecture the most?
+Identify the characteristics that will influence your architecture.
 
-______________________________________________________
+| Characteristic | ✓ |
+|---------------|---|
+| Read-heavy | |
+| Write-heavy | |
+| Large Objects | |
+| Small Objects | |
+| Global Users | |
+| Regional Users | |
+| Real-time | |
+| Asynchronous | |
+| Bursty Traffic | |
+| Predictable Traffic | |
 
-If one assumption changed dramatically, which architectural decision would you revisit?
+Other observations:
 
-______________________________________________________
+```
+____________________________________________________
 
----
-
-# Self-Assessment
-
-Rate yourself.
-
-| Skill | ⭐ |
-|-------|----|
-| Identifying assumptions | |
-| Estimating storage | |
-| Estimating QPS | |
-| Connecting estimates to architecture | |
-| Explaining reasoning | |
-
----
-
-# Challenge Exercise
-
-Design **Instagram**.
-
-Without looking at the playbook:
-
-1. Identify the product characteristics.
-2. State your assumptions.
-3. Estimate:
-   - Daily Active Users
-   - Storage
-   - Average QPS
-   - Peak QPS
-4. List three architectural decisions that your estimates justify.
+____________________________________________________
+```
 
 ---
 
-## 🏁 Success Criteria
+## Capacity Assumptions
 
-By the end of this worksheet, you should be able to:
+| Assumption | Value |
+|------------|-------|
+| Registered Users | |
+| Daily Active Users | |
+| Requests per User per Day | |
+| Writes per User per Day | |
+| Average Object Size | |
+| Data Retention | |
 
-- □ State assumptions confidently.
-- □ Estimate storage without a calculator.
-- □ Estimate QPS quickly.
-- □ Explain why the estimates matter.
-- □ Connect every estimate to an architectural decision.
+---
+
+# Capacity Estimation
+
+## Storage
+
+Formula
+
+```
+Users × Objects × Size
+```
+
+Calculation
+
+```
+____________________________________________________
+
+____________________________________________________
+```
+
+Architecture Decision
+
+```
+____________________________________________________
+
+____________________________________________________
+```
+
+---
+
+## Average QPS
+
+Formula
+
+```
+Requests per Day ÷ 86,400
+```
+
+Calculation
+
+```
+____________________________________________________
+```
+
+Architecture Decision
+
+```
+____________________________________________________
+```
+
+---
+
+## Peak QPS
+
+Formula
+
+```
+Average QPS × (3–5)
+```
+
+Calculation
+
+```
+____________________________________________________
+```
+
+Architecture Decision
+
+```
+____________________________________________________
+```
+
+---
+
+## Bandwidth (Optional)
+
+Estimate only if it influences your design.
+
+Calculation
+
+```
+____________________________________________________
+```
+
+Architecture Decision
+
+```
+____________________________________________________
+```
+
+---
+
+# 🧠 Architecture Decision Log
+
+| Observation | Architecture Decision |
+|-------------|-----------------------|
+| | |
+| | |
+| | |
+| | |
+| | |
+
+---
+
+# 🎯 Biggest Constraint
+
+Which estimate had the biggest impact on your design?
+
+☐ Storage
+
+☐ Traffic
+
+☐ Latency
+
+☐ Reliability
+
+☐ Availability
+
+☐ Other
+
+Why?
+
+```
+____________________________________________________
+
+____________________________________________________
+```
+
+---
+
+# 🎤 Final Interview Answer
+
+Imagine you're speaking to the interviewer.
+
+Summarize your design in **5–8 sentences**.
+
+Focus on:
+
+- assumptions
+- estimates
+- architectural decisions
+- trade-offs
+
+```
+____________________________________________________
+
+____________________________________________________
+
+____________________________________________________
+
+____________________________________________________
+
+____________________________________________________
+```
+
+---
+
+# 💭 Reflection
+
+What assumption had the biggest impact?
+
+```
+____________________________________________________
+```
+
+What trade-off did you make?
+
+```
+____________________________________________________
+```
+
+What would you ask the interviewer next?
+
+```
+____________________________________________________
+```
+
+---
+
+## ✅ Self Review
+
+Before moving on, check the following:
+
+- ☐ I stated assumptions before calculating.
+- ☐ I estimated only what influenced the architecture.
+- ☐ Every estimate led to an architectural decision.
+- ☐ I explained *why* I chose each component.
+- ☐ I identified the biggest system constraint.
+- ☐ My final answer focused on reasoning instead of technology names.
+
+---
+
+## ⭐ Golden Rule
+
+> **Capacity estimation is valuable only if it changes your architecture.**
+
+If a calculation doesn't influence a design decision, you probably didn't need to calculate it.
