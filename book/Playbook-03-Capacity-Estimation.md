@@ -289,7 +289,8 @@ Think before you calculate.
 
 After estimating capacity, identify the single constraint that most influences your architecture.
 
-Explain why.
+Explain why
+
 ---
 
 ## 💡 Key Takeaway
