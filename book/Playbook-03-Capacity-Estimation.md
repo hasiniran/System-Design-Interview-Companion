@@ -195,6 +195,7 @@ Examples:
 > Every estimate should influence an architectural decision.
 
 If a calculation doesn't change your design, you probably didn't need to calculate it.
+
 ---
 
 ## ✅ Interview Checklist
