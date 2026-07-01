@@ -54,6 +54,127 @@ Choose them because they address a requirement or constraint.
 
 ---
 
+# 🧭 Decision Trees
+
+Instead of memorizing technologies, learn the questions that lead you to them.
+
+---
+
+## 1️⃣ Choosing Storage
+
+```text
+Need persistent storage?
+        │
+        ▼
+Large binary objects?
+      │         │
+     Yes       No
+      │         │
+Object      Structured data?
+Storage         │
+            Yes      No
+             │        │
+     Relational     NoSQL
+      Database      Database
+```
+
+**Rule of Thumb**
+
+- Large files (images, videos, documents) → Object Storage
+- Structured relational data → SQL Database
+- Flexible or rapidly evolving schema → NoSQL
+
+---
+
+## 2️⃣ Solving Performance Problems
+
+```text
+Performance issue?
+        │
+        ▼
+Read bottleneck?
+      │         │
+     Yes       No
+      │         │
+ Cache     Write bottleneck?
+                 │
+             Yes     No
+              │       │
+        Queue /    Investigate
+        Sharding   CPU/Network
+```
+
+**Rule of Thumb**
+
+- Slow reads → Cache
+- High write throughput → Queue or Partitioning
+- Always identify the bottleneck before choosing a solution.
+
+---
+
+## 3️⃣ Scaling the System
+
+```text
+Traffic increasing?
+        │
+        ▼
+Application?
+      │        │
+     Yes      No
+      │        │
+Horizontal   Database?
+ Scaling         │
+             Reads    Writes
+               │         │
+        Read Replica  Sharding
+```
+
+**Rule of Thumb**
+
+- Scale stateless services horizontally.
+- Scale reads with replicas.
+- Scale writes with partitioning or sharding.
+
+---
+
+## 4️⃣ Communication Pattern
+
+```text
+Need communication?
+        │
+        ▼
+Immediate response?
+      │         │
+     Yes       No
+      │         │
+ REST/gRPC   Can it be async?
+                 │
+             Yes      No
+              │        │
+     Queue / Event   Revisit
+           Bus       Requirements
+```
+
+**Rule of Thumb**
+
+- Immediate user response → Synchronous APIs
+- Long-running or independent work → Asynchronous messaging
+
+---
+
+> 💡 **Interview Tip**
+>
+> Don't say:
+>
+> *"I'd use Redis."*
+>
+> Say:
+>
+> *"Since the system is read-heavy, introducing a cache like Redis would reduce database load."*
+>
+> Interviewers evaluate your reasoning more than your technology choices.
+---
+
 # 🌍 Workload Patterns
 
 | Workload | Typical Architecture |
