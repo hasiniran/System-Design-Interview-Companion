@@ -58,7 +58,7 @@ Never estimate before understanding the product and its workload.
 
 ---
 
-# Product Characteristics
+## Product Characteristics
 
 Before calculating anything, understand the workload.
 
@@ -89,9 +89,9 @@ Before estimating, ask yourself:
 
 ---
 
-# Capacity Estimation Toolkit
+## Capacity Estimation Toolkit
 
-| Estimate | Formula | Why It Matters |
+| Estimate | Formula | Architecture Impact |
 |-----------|---------|----------------|
 | Average QPS | Requests/day ÷ 86,400 | Baseline server sizing |
 | Peak QPS | 3–5 × Average QPS* | Autoscaling & load balancing |
@@ -101,7 +101,11 @@ Before estimating, ask yourself:
 
 > *Assume **3–5×** unless the interviewer specifies traffic patterns. Explain your assumption.
 
-📌 Need a quick refresher on binary units, powers of two, and common estimation formulas? See the Capacity Estimation Cheat Sheet.
+> 📌 **Reference**
+>
+> Need a refresher on powers of two, binary units, and estimation formulas?
+>
+> See **System Design Numbers Cheat Sheet**.
 ---
 
 # Worked Example – Dropbox
@@ -122,11 +126,14 @@ I'll make a few assumptions before estimating capacity.
 ### Storage
 
 ```
-5M × 1 × 5 MB
+5M × 1 × 5 MB ≈ 25 TB/day ≈ 9 PB/year
 
-≈ 25 TB/day
+→ Decision
 
-≈ 9 PB/year
+Store file contents in object storage.
+
+Store metadata separately in a relational database.
+
 ```
 
 ### Average QPS
@@ -142,33 +149,52 @@ Assume 20 million requests/day.
 ### Peak QPS
 
 ```
-231 × 5
+231 × 5 ≈ 1,155 QPS
 
-≈ 1,155 QPS
+→ Decision:
+Traffic exceeds what a single application instance should handle.
+
+Introduce multiple stateless application servers behind a load balancer.
 ```
 
 ### Architectural Conclusions
 
-- Store files in Object Storage.
-- Store metadata separately in a relational database.
-- Introduce caching because reads dominate.
-- Design for high durability.
+- **Large, continuously growing storage**
+  → Store files in object storage and metadata separately.
 
-Notice how every estimate influenced a design decision.
+- **Peak traffic exceeds a single application instance**
+  → Deploy multiple stateless application servers behind a load balancer.
+
+- **High durability**
+  → Replicate data and maintain backups.
+
+- **Assumption: Reads significantly outnumber writes**
+  → Introduce caching to reduce database load.
 
 ---
 
-## ⭐ Interview Insight
+## 🎤 Interview Language
 
-Interviewers care more about your reasoning than your arithmetic.
+When you have a number, say:
 
-A strong answer follows this pattern:
+> "Estimate is **X**. This means **[decision]**, so I need **[technology]**."
 
-1. State assumptions.
-2. Perform quick estimates.
-3. Explain what the numbers tell you.
-4. Connect every estimate to the architecture.
+Examples:
+- "Peak QPS is **1.1K**. Traffic is unlikely to be handled comfortably by a single application instance. I'd introduce multiple stateless application servers behind a load balancer."
+- "Storage is **9 PB**. Storage grows to petabyte scale. I'd store file contents in object storage and keep metadata in a relational database."
+- "This is **read-heavy**, so I need **caching**."
 
+> 💡 **Why this works**
+>
+> - Demonstrates your calculations.
+> - Connects estimates to architectural decisions.
+> - Justifies technology choices with reasoning.
+
+## 💡 Golden Rule
+
+> Every estimate should influence an architectural decision.
+
+If a calculation doesn't change your design, you probably didn't need to calculate it.
 ---
 
 ## ✅ Interview Checklist
@@ -207,15 +233,30 @@ A strong answer follows this pattern:
 
 ```
 Product
-   │
-   ▼
-Workload
-   │
-   ▼
-Capacity
-   │
-   ▼
+
+↓
+
+Requirements
+
+↓
+
+Product Characteristics
+
+↓
+
+Assumptions
+
+↓
+
+Capacity Estimation
+
+↓
+
 Architecture
+
+↓
+
+Trade-offs
 ```
 
 ---
@@ -234,14 +275,21 @@ Architecture
 
 Design Google Drive.
 
-1. Identify the product characteristics.
-2. State your assumptions.
-3. Estimate:
-   - Storage
-   - Average QPS
-   - Peak QPS
-4. Explain how those estimates influence your architecture.
+After estimating, answer: 
+> "What's my biggest constraint (storage / QPS / global latency), and what does that force me to build?"
 
+Example answer:
+> "Storage is my constraint—100 PB/year. That forces object storage. QPS is secondary—I can handle it with a load balancer."
+
+Compare to Dropbox: Did you pick the same technologies? Why or why not?
+
+---
+
+Think before you calculate.
+
+After estimating capacity, identify the single constraint that most influences your architecture.
+
+Explain why.
 ---
 
 ## 💡 Key Takeaway
