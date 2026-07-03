@@ -45,7 +45,7 @@ Understand Product
 Requirements
         │
         ▼
-Product Characteristics
+workload characteristics
         │
         ▼
 Capacity Estimation
@@ -58,7 +58,7 @@ Never estimate before understanding the product and its workload.
 
 ---
 
-## Product Characteristics
+## Workload Characteristics
 
 Before calculating anything, understand the workload.
 
@@ -241,7 +241,7 @@ Requirements
 
 ↓
 
-Product Characteristics
+Workload characteristics
 
 ↓
 
