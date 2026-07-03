@@ -1,6 +1,6 @@
 # Workbook 03 – Capacity Estimation
 
-> Practice translating product characteristics into realistic capacity estimates and architectural decisions.
+> Practice translating Workload Characteristics into realistic capacity estimates and architectural decisions.
 
 ---
 
@@ -19,7 +19,7 @@
 
 After completing this workbook, you should be able to:
 
-- Identify product characteristics that influence scale.
+- Identify Workload Characteristics that influence scale.
 - Make reasonable assumptions when information is missing.
 - Estimate storage and traffic.
 - Explain architectural decisions using your estimates.
@@ -51,7 +51,7 @@ Aim for **reasonable assumptions** and **good engineering decisions**.
 
 ---
 
-# Exercise 1 – Product Characteristics
+# Exercise 1 – Workload Characteristics
 
 For each product, identify the characteristics that influence your architecture.
 
@@ -209,6 +209,48 @@ Architecture Decision
 ```
 ____________________________________________________
 ```
+
+---
+
+## Biggest Constraint
+
+Based on your estimates, what is the biggest architectural constraint?
+
+Examples:
+
+- Storage
+- Peak QPS
+- Global Latency
+- Availability
+- Bandwidth
+
+```
+____________________________________________________
+```
+
+Why?
+
+```
+____________________________________________________
+
+____________________________________________________
+```
+
+## Architecture Summary
+
+Complete the sentence.
+
+Because my system is:
+
+- ______________________
+- ______________________
+- ______________________
+
+I will use:
+
+- ______________________
+- ______________________
+- ______________________
 
 ---
 # Exercise 4 – Architecture Decision Drills
@@ -370,6 +412,9 @@ For each observation, write the **first architectural component** that comes to 
 | Low latency | |
 | Real-time communication | |
 | Metadata lookups | |
+| High write throughput | |
+| Multi-region availability | |
+| Frequently changing data | |
 
 ---
 
@@ -417,6 +462,11 @@ Files must survive data center failures.
 
 > Therefore, I will ______________________________________ because ______________________________________.
 
+
+---
+Data must remain strongly consistent.
+
+> Therefore, I will ______________________________________ because ______________________________________.
 ---
 
 # Exercise 5 – Interview Challenge
@@ -433,7 +483,7 @@ Remember to cover:
 
 - Product summary
 - Requirements
-- Product characteristics
+- Workload Characteristics
 - Assumptions
 - Capacity estimation
 - Architectural decisions
@@ -450,23 +500,15 @@ Which estimate influenced your design the most?
 ____________________________________________________
 ```
 
-What assumption had the greatest impact?
+Which architectural decision are you least confident about?
 
 ```
 ____________________________________________________
 ```
 
-Which calculation was the hardest?
+What would you ask the interviewer if you had more time?
 
 ```
-____________________________________________________
-```
-
-If you repeated the interview tomorrow, what would you improve?
-
-```
-____________________________________________________
-
 ____________________________________________________
 ```
 
@@ -479,6 +521,7 @@ ____________________________________________________
 - Performing calculations that never influence the architecture.
 - Choosing technologies before estimating scale.
 - Forgetting to explain *why* a technology was selected.
+- Forgetting to identify the biggest constraint.
 
 ---
 
@@ -486,18 +529,19 @@ ____________________________________________________
 
 Before moving to the next playbook, confirm:
 
-- ☐ I identified the product characteristics.
+- ☐ I identified the Workload Characteristics.
 - ☐ I stated assumptions before calculating.
 - ☐ Every estimate influenced an architectural decision.
 - ☐ I explained my reasoning instead of only presenting numbers.
 - ☐ I can estimate storage and traffic without a calculator.
 - ☐ I can explain my design confidently in under five minutes.
+- ☐ I identified the biggest architectural constraint.
 
 ---
 
 # 🎯 Key Lessons
 
-- Product characteristics determine what should be estimated.
+- Workload Characteristics determine what should be estimated.
 - Capacity estimation is about order of magnitude, not precision.
 - Every estimate should justify an architectural decision.
 - Assumptions are expected—explain them clearly.
