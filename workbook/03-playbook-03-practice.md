@@ -211,10 +211,13 @@ ____________________________________________________
 ```
 
 ---
-
 # Exercise 4 – Architecture Decision Drills
 
-Use the information below to choose an architectural component.
+For each observation:
+
+1. Choose the most appropriate architectural component.
+2. Explain **why** it solves the problem.
+3. Identify **one trade-off** introduced by your decision.
 
 ---
 
@@ -222,13 +225,21 @@ Use the information below to choose an architectural component.
 
 Storage grows by **120 PB per year**.
 
-Architecture:
+**Architecture**
 
 ```
 ____________________________________________________
 ```
 
-Why?
+**Why?**
+
+```
+____________________________________________________
+
+____________________________________________________
+```
+
+**Trade-off**
 
 ```
 ____________________________________________________
@@ -240,13 +251,21 @@ ____________________________________________________
 
 Peak traffic reaches **45,000 QPS**.
 
-Architecture:
+**Architecture**
 
 ```
 ____________________________________________________
 ```
 
-Why?
+**Why?**
+
+```
+____________________________________________________
+
+____________________________________________________
+```
+
+**Trade-off**
 
 ```
 ____________________________________________________
@@ -258,13 +277,21 @@ ____________________________________________________
 
 95% of requests are reads.
 
-Architecture:
+**Architecture**
 
 ```
 ____________________________________________________
 ```
 
-Why?
+**Why?**
+
+```
+____________________________________________________
+
+____________________________________________________
+```
+
+**Trade-off**
 
 ```
 ____________________________________________________
@@ -276,13 +303,21 @@ ____________________________________________________
 
 Users are distributed across North America, Europe, and Asia.
 
-Architecture:
+**Architecture**
 
 ```
 ____________________________________________________
 ```
 
-Why?
+**Why?**
+
+```
+____________________________________________________
+
+____________________________________________________
+```
+
+**Trade-off**
 
 ```
 ____________________________________________________
@@ -292,28 +327,34 @@ ____________________________________________________
 
 ### Scenario 5
 
-Users upload files, but uploads should never block the user interface.
+Users upload large files, but uploads should never block the user interface.
 
-Architecture:
-
-```
-____________________________________________________
-```
-
-Why?
+**Architecture**
 
 ```
 ____________________________________________________
 ```
 
+**Why?**
+
+```
+____________________________________________________
+
+____________________________________________________
+```
+
+**Trade-off**
+
+```
+____________________________________________________
+```
 ---
-
 # ⚡ Quick Fire
 
-Write the first technology that comes to mind.
+For each observation, write the **first architectural component** that comes to mind.
 
-| Observation | Decision |
-|-------------|----------|
+| Observation | Architecture |
+|-------------|--------------|
 | 500 GB total storage | |
 | 150 PB storage | |
 | 25 QPS | |
@@ -324,6 +365,57 @@ Write the first technology that comes to mind.
 | Large binary objects | |
 | Frequently accessed data | |
 | Background processing | |
+| High durability | |
+| Long-term storage | |
+| Low latency | |
+| Real-time communication | |
+| Metadata lookups | |
+
+---
+
+### Reflection
+
+Choose **one** answer above and explain **why** you selected it.
+
+```
+____________________________________________________
+
+____________________________________________________
+```
+
+# 🧩 Observation → Decision
+
+Complete the sentence.
+
+---
+
+Storage grows to **250 PB/year**.
+
+> Therefore, I will ______________________________________ because ______________________________________.
+
+---
+
+Peak traffic reaches **80K QPS**.
+
+> Therefore, I will ______________________________________ because ______________________________________.
+
+---
+
+95% of traffic consists of reads.
+
+> Therefore, I will ______________________________________ because ______________________________________.
+
+---
+
+Users are distributed across five continents.
+
+> Therefore, I will ______________________________________ because ______________________________________.
+
+---
+
+Files must survive data center failures.
+
+> Therefore, I will ______________________________________ because ______________________________________.
 
 ---
 
