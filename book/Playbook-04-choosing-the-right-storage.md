@@ -357,16 +357,15 @@ Notice the pattern:
 
 # ☕ Backend Java Lens
 
-For a Spring Boot application:
+A Spring Boot application commonly integrates with several storage technologies.
 
-| Data | Typical Storage |
-|------|-----------------|
-| Users | PostgreSQL |
-| Orders | PostgreSQL |
-| File metadata | PostgreSQL |
-| Uploaded files | Object Storage |
-| Sessions | Redis Cache |
-| Analytics | Data Warehouse |
+| Storage Category | Common Technologies |
+|------------------|---------------------|
+| Relational Database | PostgreSQL, MySQL, Amazon Aurora |
+| Object Storage | Amazon S3, Google Cloud Storage, Azure Blob Storage |
+| Cache | Redis |
+| Search | Elasticsearch / OpenSearch |
+| Analytics | BigQuery, Snowflake, Redshift |
 
 Notice that each storage technology solves a different problem.
 
