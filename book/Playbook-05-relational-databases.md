@@ -6,53 +6,29 @@
 
 ## 📖 Study Card
 
-|                           |                                          |
-| ------------------------- | ---------------------------------------- |
-| **Study Time**            | 15–20 minutes                            |
-| **Priority**              | ⭐⭐⭐⭐⭐ Essential                          |
-| **Interview Expectation** | Explain • Design • Discuss Trade-offs    |
-| **Difficulty**            | Intermediate                             |
-| **Prerequisites**         | Playbook 04 – Choosing the Right Storage |
+| | |
+|---|---|
+| **Study Time** | 25–30 minutes |
+| **Priority** | ⭐⭐⭐⭐⭐ Essential |
+| **Interview Expectation** | Storage Design • Database Design • Scaling Decisions |
+| **Difficulty** | Intermediate–Advanced |
+| **Prerequisites** | Playbook 04 – Choosing the Right Storage |
 
 ---
 
 ## 📌 What Problem Does This Solve?
 
-Many backend systems store data that is:
-
-* Structured
-* Related
-* Transactional
-* Frequently queried
-* Required to remain correct
-
-Examples include:
-
-* Users
-* Orders
-* Payments
-* Inventory
-* Permissions
-* File metadata
-
-A relational database is often the safest starting point for this kind of data.
-
-The interview challenge is not simply knowing that SQL exists.
-
-It is knowing:
-
-* Why relational storage fits the data
-* Which guarantees matter
-* How schema design affects queries
-* How the database scales
-* When relational storage stops being the best fit
+Many backend systems store structured, relational, transactional data. This playbook teaches **why** relational databases fit that data, how to model it, and how to scale it before jumping to more complex architectures.
 
 ---
 
 ## 🧠 Mental Model
 
 ```text
-Structured Data
+Understand the Data
+        │
+        ▼
+Business Invariants
         │
         ▼
 Relationships
@@ -61,562 +37,370 @@ Relationships
 Transactions
         │
         ▼
-Relational Database
+Schema Design
         │
         ▼
-Indexes + Replication + Partitioning
+Indexes
+        │
+        ▼
+Scaling Strategy
 ```
-
-Start with correctness.
-
-Scale only when the workload requires it.
 
 ---
 
 ## What Makes a Database Relational?
 
-A relational database stores data in tables.
+A relational database stores structured data in tables connected by relationships.
 
-Each table contains:
+It is most appropriate when:
 
-* Rows representing records
-* Columns representing attributes
-* Keys identifying records
-* Relationships connecting tables
+- Relationships matter
+- Transactions matter
+- Strong consistency matters
+- Rich querying matters
 
-Example:
+Examples:
 
-```text
-Users
-─────
-user_id
-name
-email
-
-Orders
-──────
-order_id
-user_id
-status
-total
-```
-
-The `user_id` connects an order to its owner.
-
-Relational databases are especially useful when those relationships are important to the business logic.
+- Users
+- Orders
+- Payments
+- Inventory
+- File metadata
+- Permissions
 
 ---
 
 ## When Relational Storage Fits
 
-Choose relational storage when the system needs several of these:
-
-| Requirement                      | Why It Matters                               |
-| -------------------------------- | -------------------------------------------- |
-| Stable or well-understood schema | Data fits predictable structures             |
-| Strong relationships             | Tables can reference one another             |
-| Transactions                     | Multiple changes succeed or fail together    |
-| Strong consistency               | Reads reflect committed writes               |
-| Rich querying                    | Filtering, joining, sorting, and aggregation |
-| Data integrity                   | Constraints prevent invalid records          |
-
-Typical examples:
-
-* Banking
-* E-commerce orders
-* Payments
-* Inventory
-* User accounts
-* Permissions
-* Reservations
+| Requirement | Why It Matters |
+|---|---|
+| Stable schema | Predictable structure |
+| Relationships | Tables reference one another |
+| ACID transactions | Atomic updates |
+| Strong consistency | Correct business state |
+| Rich querying | Joins, filtering, aggregations |
+| Data integrity | Constraints enforce correctness |
 
 ---
 
 ## ACID Transactions
 
-ACID describes four transaction properties.
+| Property | Meaning |
+|---|---|
+| Atomicity | All operations succeed or none do |
+| Consistency | Business rules remain valid |
+| Isolation | Concurrent transactions behave correctly |
+| Durability | Committed data survives failures |
 
-| Property        | Meaning                                              |
-| --------------- | ---------------------------------------------------- |
-| **Atomicity**   | All operations succeed or none do                    |
-| **Consistency** | Data remains valid after the transaction             |
-| **Isolation**   | Concurrent transactions do not interfere incorrectly |
-| **Durability**  | Committed data survives failures                     |
+Example:
 
-### Example: Placing an Order
+Create Order → Reserve Inventory → Record Payment → Commit
 
-```text
-Create Order
-    │
-    ▼
-Reduce Inventory
-    │
-    ▼
-Record Payment
-    │
-    ▼
-Commit Transaction
-```
+The transaction protects the business invariant:
 
-If payment recording fails, the system may need to roll back the inventory update and order creation.
-
-That is why transactions matter.
+> Never sell inventory that does not exist.
 
 ---
 
 ## ⭐ Interview Insight
 
-Do not say:
+Don't simply say:
 
-> “I need strong consistency, so I’ll use SQL.”
+> "I need SQL."
 
-That is incomplete.
+Instead explain the invariant:
 
-Explain what must remain consistent.
-
-For example:
-
-> “Inventory and order creation must remain consistent so that two users cannot purchase the same final item. I would use transactional storage for the authoritative order and inventory records.”
-
-The business invariant is more important than the database label.
+> "Orders and inventory must remain consistent so that two customers cannot purchase the final item."
 
 ---
 
 ## Schema Design
 
-A good schema reflects:
+A schema should reflect:
 
-* The data
-* The relationships
-* The dominant query patterns
-* The required constraints
+- Data
+- Relationships
+- Query patterns
+- Constraints
 
 Example:
 
-```text
 Users
-  │
-  └──< Orders
-          │
-          └──< OrderItems >── Products
-```
+ └──< Orders
+        └──< OrderItems >── Products
 
-This supports queries such as:
-
-* Find all orders for a user
-* Find all items in an order
-* Find the product referenced by an item
+Design the schema around **how the application reads and updates data**, not around individual screens.
 
 ---
 
 ## Normalization
 
-Normalization reduces duplicated data.
+Normalization removes duplicated data.
 
 Example:
 
-### Duplicated Design
+Poor:
 
-```text
 Order
-─────
-order_id
-customer_name
-customer_email
-customer_address
-```
+- customer_name
+- customer_email
 
-The customer information may be repeated in every order.
+Better:
 
-### Normalized Design
-
-```text
 Customer
-────────
-customer_id
-name
-email
+- customer_id
+- name
+- email
 
 Order
-─────
-order_id
-customer_id
-```
+- customer_id
 
 ### Benefits
 
-* Less duplication
-* Easier updates
-* Better integrity
+- Better integrity
+- Less duplication
+- Easier updates
 
 ### Trade-off
 
-Highly normalized schemas may require more joins.
+More joins may be required.
 
 ---
 
 ## Denormalization
 
-Denormalization intentionally duplicates selected data to improve read performance.
+Denormalization intentionally duplicates data to improve reads.
 
 Examples:
 
-* Store a product name in an order snapshot
-* Store a precomputed like count
-* Maintain a read-optimized summary table
+- Product name stored with an order
+- Cached like counts
+- Summary tables
 
-Use it when:
+Use when:
 
-* Reads dominate
-* Joins are expensive
-* Stale data is acceptable
-* The duplicated value has clear update rules
+- Reads dominate
+- Join cost is high
+- Slight staleness is acceptable
 
-> Denormalization trades storage and update complexity for faster reads.
+Trade-off:
+
+Update complexity increases.
 
 ---
 
 ## Indexes
 
-An index speeds up reads by maintaining an additional searchable structure.
+Indexes create an additional searchable structure that speeds up reads.
 
-Example query:
+Typical indexed columns:
 
-```sql
-SELECT *
-FROM orders
-WHERE user_id = ?;
-```
-
-An index on `user_id` can avoid scanning the entire orders table.
-
-### Index When
-
-* A column is frequently filtered
-* A column is frequently joined
-* Results are frequently sorted by it
-* The query is important and selective
-
-### Index Trade-offs
-
-* Extra storage
-* Slower inserts and updates
-* More maintenance
-* Too many indexes can hurt write performance
-
----
-
-## Composite Indexes
-
-A composite index contains multiple columns.
+- Foreign keys
+- Frequently filtered columns
+- Frequently sorted columns
+- Join columns
 
 Example:
 
-```text
-(user_id, created_at)
-```
-
-This may help queries such as:
-
-```sql
-SELECT *
-FROM orders
+SELECT * FROM orders
 WHERE user_id = ?
 ORDER BY created_at DESC;
-```
 
-Column order matters.
+A composite index on:
 
-An index on:
-
-```text
 (user_id, created_at)
-```
 
-does not behave identically to:
+can significantly improve this query.
 
-```text
-(created_at, user_id)
-```
+### Trade-offs
 
-Design indexes around actual query patterns.
+- Extra storage
+- Slower inserts
+- Slower updates
+- Index maintenance
 
----
-
-## Primary Keys
-
-A primary key uniquely identifies a record.
-
-Common choices:
-
-### Auto-Incrementing ID
-
-Advantages:
-
-* Compact
-* Efficient indexing
-* Naturally ordered
-
-Trade-offs:
-
-* Harder to generate across independent database shards
-* May reveal record volume
-
-### UUID
-
-Advantages:
-
-* Can be generated independently
-* Useful in distributed systems
-
-Trade-offs:
-
-* Larger keys
-* Random UUIDs may reduce index locality
-
-The correct choice depends on scale, distribution, and access patterns.
+Design indexes around **real query patterns**, not every column.
 
 ---
 
 ## Read Replicas
 
-Read replicas copy data from the primary database.
+Replicas improve read scalability.
 
-```text
-                ┌──► Read Replica
-Primary DB ─────┼──► Read Replica
-                └──► Read Replica
-```
+Primary
+ ├──► Replica
+ └──► Replica
 
-Use replicas when:
+Common use cases:
 
-* Reads dominate writes
-* Read traffic is overloading the primary
-* Slight replication delay is acceptable
+- Product browsing
+- User profiles
+- Reporting
 
-### Trade-offs
+Avoid replicas for read-after-write operations unless replication lag is handled.
 
-* Replication lag
-* Stale reads
-* More operational complexity
-* Writes still go through the primary
+Trade-offs:
+
+- Replication lag
+- Operational complexity
 
 ---
 
 ## Scaling Writes
 
-Read replicas do not solve write bottlenecks.
+Writes are harder to scale because they update the source of truth.
 
-Options include:
+### 1. Optimize Queries and Indexes
 
-* Optimize queries and indexes
-* Batch writes
-* Partition tables
-* Shard data
-* Separate unrelated workloads
-* Move asynchronous work off the request path
+Improve inefficient SQL before changing architecture.
 
-Always identify the actual bottleneck first.
+Examples:
 
----
+- Add missing indexes
+- Remove full table scans
+- Eliminate N+1 queries
 
-## Partitioning
+Trade-off:
 
-Partitioning divides a large logical table into smaller pieces.
+Indexes improve reads but slow writes.
 
-Common strategies:
+### 2. Batch Writes
 
-### Range Partitioning
-
-```text
-Orders from Jan–Mar
-Orders from Apr–Jun
-Orders from Jul–Sep
-```
+Group multiple writes together.
 
 Useful for:
 
-* Time-based data
-* Archival
-* Range queries
+- Analytics
+- Logs
+- Notifications
 
-Risk:
+Trade-off:
 
-* Uneven traffic across ranges
+Data becomes visible later.
 
-### Hash Partitioning
+### 3. Move Work Off the Request Path
 
-```text
-hash(user_id) % number_of_partitions
-```
+Use queues and background workers.
 
-Useful for:
+Examples:
 
-* Distributing data more evenly
+- Email
+- Thumbnail generation
+- Recommendations
 
-Risk:
+Trade-off:
 
-* Range queries become harder
+Eventual consistency.
 
----
+### 4. Partition Tables
 
-## Sharding
+Split large tables.
 
-Sharding distributes data across separate database instances.
+Strategies:
 
-```text
-Users A–F ──► Shard 1
-Users G–M ──► Shard 2
-Users N–Z ──► Shard 3
-```
+- Range partitioning
+- Hash partitioning
 
-Use sharding only when:
+Choose partition keys that:
 
-* A single database cannot handle the data or write load
-* Vertical scaling is no longer sufficient
-* The shard key is well understood
+- Balance load
+- Match query patterns
+- Avoid hotspots
 
-### Sharding Costs
+### 5. Shard the Database
 
-* Cross-shard queries
-* Cross-shard transactions
-* Rebalancing
-* Hot shards
-* More difficult operations
-* More complex application logic
+Distribute data across multiple database servers.
 
-> Sharding is powerful, but it is not a free optimization.
+Use only after simpler optimizations.
 
----
+Common shard keys:
 
-## Choosing a Shard Key
+- user_id
+- customer_id
+- tenant_id
+- region
 
-A good shard key should:
+Trade-offs:
 
-* Distribute data evenly
-* Avoid hotspots
-* Match common access patterns
-* Minimize cross-shard queries
-* Remain stable
+- Cross-shard joins
+- Cross-shard transactions
+- Hot shards
+- Rebalancing
 
-Example:
+> 💡 Rule of Thumb
+>
+> Better Queries
+> ↓
+> Better Indexes
+> ↓
+> Batch Writes
+> ↓
+> Async Processing
+> ↓
+> Partitioning
+> ↓
+> Sharding
 
-```text
-Shard by user_id
-```
-
-This works well when most requests concern one user’s data.
-
-It works poorly when queries frequently aggregate across all users.
-
----
-
-## Replication vs Partitioning
-
-| Technique    | Primary Goal                           |
-| ------------ | -------------------------------------- |
-| Replication  | Availability and read scaling          |
-| Partitioning | Organize or distribute data            |
-| Sharding     | Scale data and writes across databases |
-
-They solve different problems and are often used together.
+Scale up before scaling out.
 
 ---
 
-## Strong Consistency vs Replication Lag
+## Replication vs Partitioning vs Sharding
 
-A read replica may not immediately contain the latest write.
-
-Example:
-
-```text
-User updates profile
-        │
-        ▼
-Primary commits update
-        │
-        ▼
-Replica receives update later
-```
-
-If the next request reads from the replica, the user may briefly see old data.
-
-Possible approaches:
-
-* Read recent writes from the primary
-* Use session-level read-after-write consistency
-* Accept temporary staleness
-* Route consistency-sensitive reads differently
-
-Consistency requirements should be tied to the user experience.
+| Technique | Solves |
+|---|---|
+| Replication | Availability & read scaling |
+| Partitioning | Organize very large tables |
+| Sharding | Scale write throughput & storage |
 
 ---
 
 ## Failure Handling
 
-Relational databases still fail.
-
 Plan for:
 
-* Primary database failure
-* Replica failure
-* Network partition
-* Disk failure
-* Corrupted deployment
-* Accidental deletion
+- Primary failure
+- Replica failure
+- Network partition
+- Disk failure
+- Human error
 
-Common protections:
+Use:
 
-* Replication
-* Automated failover
-* Backups
-* Point-in-time recovery
-* Tested restoration procedures
+- Replication
+- Backups
+- Point-in-time recovery
 
-> Replication improves availability. Backups protect against data loss and human error. You often need both.
+Remember:
+
+Replication improves availability.
+
+Backups protect against accidental deletion and corruption.
+
+You usually need both.
 
 ---
 
-## Worked Example – E-commerce Orders
+## Worked Example – E-commerce
 
-### Data
+Requirements:
 
-* Orders
-* Order items
-* Customers
-* Inventory
-* Payments
+- Prevent overselling
+- Preserve payment correctness
+- Query customer orders
 
-### Requirements
+Storage:
 
-* Prevent overselling
-* Preserve payment correctness
-* Track order state
-* Query orders by customer
-* Retain order history
+- Orders → Relational DB
+- Inventory → Relational DB
+- Payments → Relational DB
 
-### Storage Decision
+Optimizations:
 
-Use relational storage for authoritative order, inventory, and payment records because:
-
-* Relationships matter
-* Transactions matter
-* Constraints matter
-* Strong consistency matters
-
-### Possible Optimizations
-
-* Index orders by customer and creation time
-* Use read replicas for order history
-* Cache product browsing data
-* Process notifications asynchronously
-* Partition historical orders by time when needed
-
-### Trade-offs
-
-* Write scaling is harder than with some distributed stores
-* Replication introduces lag
-* Sharding increases complexity
+- Composite indexes
+- Read replicas
+- Cached catalog
+- Async notifications
 
 ---
 
@@ -624,130 +408,61 @@ Use relational storage for authoritative order, inventory, and payment records b
 
 Instead of:
 
-> “I’ll use a relational database.”
+> "I'll shard."
 
 Say:
 
-> “Orders, payments, and inventory are structured and transactional. I need constraints and atomic updates to preserve correctness, so I’ll use a relational database as the source of truth.”
-
-Instead of:
-
-> “I’ll add an index.”
-
-Say:
-
-> “Orders are frequently queried by customer and sorted by creation time, so I’d consider a composite index on customer ID and creation time. The trade-off is additional storage and slower writes.”
-
-Instead of:
-
-> “I’ll shard the database.”
-
-Say:
-
-> “I would first confirm that the primary bottleneck is write or storage capacity. If a single database can no longer handle the workload, I’d shard using a key aligned with the dominant access pattern, while acknowledging the cost of cross-shard queries and transactions.”
+> "I'd first verify writes are the bottleneck. If indexing, batching, asynchronous processing and partitioning are insufficient, I'd shard using a key aligned with the dominant access pattern."
 
 ---
 
 ## ✅ Interview Checklist
 
-Before finalizing a relational database design, ask:
-
-* □ Which data needs transactions?
-* □ What business invariants must remain correct?
-* □ What are the dominant query patterns?
-* □ Which columns need indexes?
-* □ Which data can tolerate stale reads?
-* □ Are reads or writes the bottleneck?
-* □ Would read replicas help?
-* □ Is partitioning sufficient before sharding?
-* □ What is the backup and recovery plan?
-* □ What trade-off does each optimization introduce?
+- Business invariants identified
+- Transactions justified
+- Schema reflects queries
+- Indexes justified
+- Replica usage explained
+- Partitioning before sharding
+- Backup strategy considered
+- Trade-offs discussed
 
 ---
 
 ## ⚠️ Interview Traps
 
-* Choosing SQL only because the schema is structured
-* Saying “strong consistency” without naming the invariant
-* Adding indexes without explaining the query
-* Assuming indexes are free
-* Using read replicas to solve write bottlenecks
-* Sharding too early
-* Choosing a shard key that creates hotspots
-* Treating replication as a backup
-* Ignoring replication lag
-* Normalizing or denormalizing without considering access patterns
+- Choosing SQL because data is structured
+- Adding indexes everywhere
+- Using replicas for write scaling
+- Sharding too early
+- Confusing replication with backups
 
 ---
 
 ## ☕ Backend Java Lens
 
-A Spring Boot application commonly uses relational storage through:
+Typical stack:
 
-| Concern            | Typical Approach                               |
-| ------------------ | ---------------------------------------------- |
-| Data access        | Spring Data JPA or JDBC                        |
-| Transactions       | `@Transactional`                               |
-| Schema migration   | Flyway or Liquibase                            |
-| Connection pooling | HikariCP                                       |
-| Query monitoring   | Database metrics and slow-query logs           |
-| Resilience         | Timeouts, retries where safe, circuit breakers |
+- Spring Data JPA / JDBC
+- @Transactional
+- Flyway / Liquibase
+- HikariCP
 
-### Important Caution
-
-Retries around database transactions can create duplicate side effects.
-
-For operations such as payment or order creation, use:
-
-* Idempotency keys
-* Unique constraints
-* Carefully bounded retries
-* Explicit transaction boundaries
-
-Framework annotations do not replace architectural reasoning.
-
----
-
-## 📝 Whiteboard Sketch
-
-```text
-                 Application Services
-                         │
-                         ▼
-                    Primary DB
-                   /     |      \
-                  /      |       \
-                 ▼       ▼        ▼
-          Read Replica  Backup  Read Replica
-                 │
-                 ▼
-              Read Traffic
-```
-
-At greater scale:
-
-```text
-                 Application
-                      │
-            ┌─────────┴─────────┐
-            ▼                   ▼
-         Shard A             Shard B
-      users 0–499K        users 500K–999K
-```
+Use idempotency keys and unique constraints for payments and order creation.
 
 ---
 
 ## 🎯 30-Second Recap
 
-* Relational databases fit structured, related, transactional data.
-* ACID transactions protect business invariants.
-* Normalize for integrity; denormalize selectively for read performance.
-* Indexes improve reads but add storage and write cost.
-* Read replicas scale reads, not writes.
-* Partitioning and sharding solve different scaling problems.
-* Sharding should come after simpler optimizations.
-* Replication is not a substitute for backups.
-* Every database decision should follow the access pattern and required guarantees.
+- Relational databases fit structured, transactional data.
+- Transactions protect business invariants.
+- Normalize for integrity.
+- Denormalize selectively.
+- Indexes optimize reads but slow writes.
+- Read replicas scale reads.
+- Scale writes progressively.
+- Replication improves availability.
+- Backups protect data.
 
 ---
 
@@ -755,19 +470,18 @@ At greater scale:
 
 Design the relational storage layer for a ticket-booking system.
 
-Cover:
+Discuss:
 
-1. Major tables and relationships
-2. The invariant that prevents double booking
-3. Transaction boundaries
-4. Important indexes
-5. Read-replica usage
-6. The first scaling bottleneck
-7. Whether and how you would partition or shard
-8. At least three trade-offs
+1. Tables
+2. Relationships
+3. Transactions
+4. Indexes
+5. Read replicas
+6. Scaling
+7. Trade-offs
 
 ---
 
 ## 💡 Key Takeaway
 
-> A relational database is not chosen merely because data has columns. It is chosen when relationships, transactions, constraints, and correctness are central to the system.
+> Choose a relational database because relationships, transactions, constraints, and correctness matter—not simply because the data has columns.
